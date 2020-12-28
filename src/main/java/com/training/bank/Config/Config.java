@@ -70,6 +70,13 @@ public class Config extends WebMvcConfigurerAdapter{
 		sessionFactory.setHibernateProperties(hibernateProperties);
 		return sessionFactory;
 	}
+	
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+	registry.addMapping("/**").allowedOrigins("http://localhost:4200");
+	registry.addMapping("/**").allowedOrigins("*");
+	registry.addMapping("/**");
+	}
 
 	@Bean
 	public DataSource dataSource() {

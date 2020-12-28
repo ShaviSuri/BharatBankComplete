@@ -1,45 +1,35 @@
 package com.training.bank.model;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 @Component
 public class MiniStatement {
 	
-	private String transferAccNo;
-	private String transferType;
-	private Double amount;
-	private Double withdraw_amount;
-	private Double deposit_amount;
-	public String getTransferAccNo() {
-		return transferAccNo;
+	private List<Transaction>transaction;
+	private List<Withdraw>withdraw;
+	private List<Deposit>deposit;
+	public List<Transaction> getTransaction() {
+		return transaction;
 	}
-	public void setTransferAccNo(String transferAccNo) {
-		this.transferAccNo = transferAccNo;
+	public void setTransaction(List<Transaction> transaction) {
+		this.transaction = transaction;
 	}
-	public String getTransferType() {
-		return transferType;
+	public List<Withdraw> getWithdraw() {
+		return withdraw;
 	}
-	public void setTransferType(String transferType) {
-		this.transferType = transferType;
+	public void setWithdraw(List<Withdraw> withdraw) {
+		this.withdraw = withdraw;
 	}
-	public Double getAmount() {
-		return amount;
+	public List<Deposit> getDeposit() {
+		return deposit;
 	}
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setDeposit(List<Deposit> deposit) {
+		this.deposit = deposit;
 	}
-	public Double getWithdraw_amount() {
-		return withdraw_amount;
-	}
-	public void setWithdraw_amount(Double withdraw_amount) {
-		this.withdraw_amount = withdraw_amount;
-	}
-	public Double getDeposit_amount() {
-		return deposit_amount;
-	}
-	public void setDeposit_amount(Double deposit_amount) {
-		this.deposit_amount = deposit_amount;
-	}
+
+	
 	
 	
 	

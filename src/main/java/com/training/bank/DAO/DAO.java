@@ -21,7 +21,7 @@ import com.training.bank.model.Transaction;
 import com.training.bank.model.Withdraw;
 
 @Repository
-public class DAO {
+public class DAO implements DaoInterface {
 	@Autowired
 	SessionFactory sessionFactory;
 	@Autowired
@@ -70,10 +70,21 @@ public class DAO {
 	}
 	@Transactional
 	public Account getAccountDetails(Long id) {
-		Account account;
+		Account account=new Account();
 		Session session = sessionFactory.getCurrentSession();
 		try {
+				
+			
 			account=session.get(Account.class, id);
+			for(Transaction trans:account.getTransaction()) {
+				
+			}
+			for(Withdraw with : account.getWithdraw()) {
+				
+			}
+			for(Deposit depo : account.getDeposit()) {
+				
+			}
 			
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -83,10 +94,23 @@ public class DAO {
 	}
 	@Transactional
 	public Customer getCustomer(Long id) {
-		Customer customer;
+		Customer customer=new Customer();
 		Session session =sessionFactory.getCurrentSession();
 		try {
+				
+			
 			customer=session.get(Customer.class, id);
+			for(Account account:customer.getAccount()) {
+				for(Transaction trans:account.getTransaction()) {
+					
+				}
+				for(Withdraw with : account.getWithdraw()) {
+					
+				}
+				for(Deposit depo : account.getDeposit()) {
+					
+				}
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			return null;
@@ -195,6 +219,9 @@ public class DAO {
 		Account oldAccount = session.get(Account.class, account.getId());
 		Iterator<Deposit> iterator = account.getDeposit().iterator();
 		Deposit newDeposit = iterator.next();
+		for(Withdraw with:oldAccount.getWithdraw()) {
+			
+		}
 		if(account.getDeposit()==null)
 		{		
 			List<Deposit> withList = new ArrayList<Deposit>();
@@ -220,29 +247,58 @@ public class DAO {
 	public MiniStatement getStatement(Long id,String date) {
 		Session session = sessionFactory.getCurrentSession();
 		Customer customer = session.get(Customer.class, id);
-		
 		for(Account account :customer.getAccount()) {
+			if(customer.getAccount()==null) {
+				return null;
+			}
 			for(Transaction transaction:account.getTransaction()) {
 				
 				String [] strbuffer= transaction.getDate().toString().split(" ");
-				System.out.println(strbuffer[0]);
 				if(strbuffer[0].equals(date)) {
-					miniStatement.setTransferAccNo(transaction.getTransferAccNo());
-					miniStatement.setTransferType(transaction.getTransferType());
-					miniStatement.setAmount(transaction.getAmount());
+					if(miniStatement.getTransaction()==null) {
+						List<Transaction>checkList=new ArrayList<>();
+						checkList.add(transaction);
+						miniStatement.setTransaction(checkList);
+					}else {
+						for(Transaction ms:miniStatement.getTransaction()) {
+							
+						}
+						miniStatement.getTransaction().add(transaction);
+					}
+					
+				
 				}
 			}
 			for(Withdraw withdraw:account.getWithdraw()) {
 				String [] strbuffer= withdraw.getDate().toString().split(" ");
-				System.out.println(strbuffer[0]);
 				if(strbuffer[0].equals(date)) {
-					miniStatement.setWithdraw_amount(withdraw.getWithdraw_amount());
+					if(miniStatement.getWithdraw()==null) {
+						List<Withdraw>checkList=new ArrayList<>();
+						checkList.add(withdraw);
+						miniStatement.setWithdraw(checkList);
+					}else {
+						for(Withdraw ms:miniStatement.getWithdraw()) {
+							
+						}
+						miniStatement.getWithdraw().add(withdraw);
+					}
+					
 				}
 			}
 			for(Deposit deposit:account.getDeposit()) {
 				String [] strbuffer= deposit.getDate().toString().split(" ");
 				if(strbuffer[0].equals(date)) {
-					miniStatement.setDeposit_amount(deposit.getDeposit_amount());
+					if(miniStatement.getDeposit()==null) {
+						List<Deposit>checkList=new ArrayList<>();
+						checkList.add(deposit);
+						miniStatement.setDeposit(checkList);;
+					}else {
+						for(Withdraw ms:miniStatement.getWithdraw()) {
+							
+						}
+						miniStatement.getDeposit().add(deposit);
+					}
+					
 				}
 			}
 		}
@@ -266,14 +322,102 @@ public class DAO {
 					for(Deposit depo : account.getDeposit()) {
 						
 					}
+					if(customer==null) {
+						return null;
+					}
 				}
-			if(customer==null) {
-				return null;
-			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
 		return customer;
+	}
+	@Transactional
+	public boolean addAccount(Account account,Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		Customer oldCustomer = new Customer();
+		Query query = session.createQuery("from Customer where id="+id);
+		try {
+			 oldCustomer= (Customer) query.getSingleResult();
+			
+			for(Account cus:oldCustomer.getAccount()) {
+				if(account.getAcc_type().equals(cus.getAcc_type())) {
+					return false;
+				}else {
+					oldCustomer.getAccount().add(account);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		try {
+			session.saveOrUpdate(oldCustomer);
+			for(Transaction trans:account.getTransaction()) {
+				
+			}
+			for(Withdraw with : account.getWithdraw()) {
+				
+			}
+			for(Deposit depo : account.getDeposit()) {
+				
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return true;
+	}
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<Account> getAccount() {
+		List<Account> accountList;
+		Session session = sessionFactory.getCurrentSession();
+		try {
+			Query query1= session.createQuery("from Account");
+			accountList = query1.getResultList();
+			
+			for(Account acc:accountList) {
+				for(Transaction trans:acc.getTransaction()) {}
+				for(Withdraw with:acc.getWithdraw()) {}
+				for(Deposit dep:acc.getDeposit()) {}
+			}
+		
+		} 
+		catch (Exception e) {
+			// TODO: handle exception
+			return null;
+		}
+	
+		return accountList;
+	}
+	
+	@Transactional
+	public boolean changePassword(Long id,Customer customer) {
+		Session session = sessionFactory.getCurrentSession();
+		Customer oldCustomer = session.get(Customer.class, id);
+		
+		oldCustomer.setPassword(customer.getPassword());
+		try {
+			session.update(oldCustomer);
+			session.merge(oldCustomer);
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
+		return true;
+	}
+	
+	@Transactional
+	public boolean deleteAccount(Long id) {
+		Session session = sessionFactory.getCurrentSession();
+		try {
+			Query query2=session.createQuery("delete Account where id="+id);
+			query2.executeUpdate();
+		
+		} catch (Exception e) {
+			// TODO: handle exception
+			return false;
+		}
+		return true;
 	}
 }

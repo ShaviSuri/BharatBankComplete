@@ -20,8 +20,8 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	private String Acc_no;
-	private String Acc_type;
+	private String acc_no;
+	private String acc_type;
 	private Double balance;
 	private String branchName;
 	private String branchCode;
@@ -46,19 +46,19 @@ public class Account {
 	}
 
 	public String getAcc_no() {
-		return Acc_no;
+		return acc_no;
 	}
 
 	public void setAcc_no(String acc_no) {
-		Acc_no = acc_no;
+		this.acc_no = acc_no;
 	}
 
 	public String getAcc_type() {
-		return Acc_type;
+		return acc_type;
 	}
 
 	public void setAcc_type(String acc_type) {
-		Acc_type = acc_type;
+		this.acc_type = acc_type;
 	}
 
 	public Double getBalance() {
